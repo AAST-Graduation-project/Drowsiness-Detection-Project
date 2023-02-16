@@ -126,7 +126,7 @@ while cap.isOpened():
 
     cv2.imshow('Head Pose Estimation', image)
 
-    if cv2.waitKey(1) & 0xFF == 27:
+    if cv2.waitKey(1) ==ord('q'):
         break
 
 cap.release()
