@@ -1,0 +1,2 @@
+drowsiness_detection_pkg
+-DCATKIN_DEVEL_PREFIX=/home/mario/Drowsiness-Detection-Project/ROS_Workspace/devel -DCMAKE_INSTALL_PREFIX=/home/mario/Drowsiness-Detection-Project/ROS_Workspace/install -G Unix Makefiles
