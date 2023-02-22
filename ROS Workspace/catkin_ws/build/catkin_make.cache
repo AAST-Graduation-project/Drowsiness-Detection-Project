@@ -1,2 +1,0 @@
-my_pkg
--DCATKIN_DEVEL_PREFIX=/home/mario/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/mario/catkin_ws/install -G Unix Makefiles

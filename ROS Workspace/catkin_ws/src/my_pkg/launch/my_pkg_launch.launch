@@ -1,5 +1,0 @@
-<launch>
-	<!--node name="node_name" pkg="pkg_name" type="file_name.py" output="screen"/-->
-	<node name="my_talker" pkg="my_pkg" type="my_first_node.py"/>
-	<node name="my_listener" pkg="my_pkg" type="my_second_node.py" output="screen"/>
-</launch>
