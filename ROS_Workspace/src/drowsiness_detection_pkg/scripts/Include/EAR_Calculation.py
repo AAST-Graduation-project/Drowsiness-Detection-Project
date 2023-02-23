@@ -9,33 +9,39 @@ dlib_face = shape_predictor("/home/mario/Drowsiness-Detection-Project/ROS_Worksp
 # face detector model
 face_detector = get_frontal_face_detector()
 
+#global constant values
+Drowsiness_Factor = 0.7
+Holding_Frames = 20
+Ignored_Initial_EAR_Values = 0.1
+N_Initial_Frames = 20
+
 # global initial values
 class static:
     flag=0
     initial_EAR=0.0
     state= "NO state"
-    initial_flag=0
+    initial_EAR_counter=0
     sum_EAR=0.0
     counter=0
 
 
 """
 Function_name: Get_Initial_EAR
-Input: EAR 
+Input: current EAR & Intia
 job: takes the average of the curren EAR 
 output: Initiail EAR
 """
-def Get_Initial_EAR(C_EAR, C_initial_EAR):
+def Get_Initial_EAR(C_EAR):
     
-    if static.initial_flag == 20:
-        C_initial_EAR = round((static.sum_EAR/20.0), 2)
+    if static.initial_EAR_counter == N_Initial_Frames:
+        static.initial_EAR = round((static.sum_EAR/N_Initial_Frames), 2)
         static.sum_EAR=0
         static.initial_flag=0
-    elif (static.initial_flag<20) and (C_EAR > 0.10):
+    elif (static.initial_EAR_counter<N_Initial_Frames) and (C_EAR > Ignored_Initial_EAR_Values):
         static.sum_EAR += C_EAR
-        static.initial_flag += 1
+        static.initial_EAR_counter += 1
         
-    return C_initial_EAR
+    return static.initial_EAR
 
 """
 Function_name: Get_Eye
@@ -80,20 +86,20 @@ Input: Current_EAR & initial_EAR
 job: compare Current_EAR with initial_EAR
 output: Eye_state
 """
-def Get_Eye_State(C_Current_EAR, C_initial_EAR, C_state):
+def Get_Eye_State(C_Current_EAR, C_initial_EAR):
     
     
-    if C_Current_EAR < (C_initial_EAR*0.65):
+    if C_Current_EAR < (C_initial_EAR*Drowsiness_Factor):
         static.counter+=1
-        if static.counter > 20:
+        if static.counter > Holding_Frames:
             static.flag = 1
-            C_state = "sleep"
+            static.state = "sleep"
         
-    elif C_Current_EAR >= (static.initial_EAR*0.65) :
+    elif C_Current_EAR >= (C_initial_EAR*Drowsiness_Factor) :
         static. counter = 0
         static.flag = 0
-        C_state = "awake"
-    return C_state
+        static.state = "awake"
+    return static.state
 
 
 """
@@ -127,15 +133,15 @@ def Get_Face(frame):
 
         #Initial EAR for first run only
         if static.initial_EAR == 0:
-            static.initial_EAR =Get_Initial_EAR(avg_EAR, static.initial_EAR)
+            static.initial_EAR =Get_Initial_EAR(avg_EAR)
 
         #state of the Driver based on EAR
-        static.state=Get_Eye_State(avg_EAR, static.initial_EAR, static.state)
+        static.state=Get_Eye_State(avg_EAR, static.initial_EAR)
 
         #print state of eye on screen
-        putText(frame, str(static.state), (5, 200), 
+        putText(frame, str(static.state), (0, 75), 
             FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 0), 2)
         #print current EAR on screen
-        putText(frame, ("EAR="+(str(avg_EAR))), (10, 60),
+        putText(frame, ("EAR="+(str(avg_EAR))), (0, 15),
             FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 0), 2)
     return frame
