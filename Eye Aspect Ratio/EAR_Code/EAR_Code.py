@@ -1,11 +1,10 @@
-from numba import jit
+
 from argparse import ArgumentParser
 from math import dist
 from cv2 import (COLOR_BGR2GRAY, FONT_HERSHEY_COMPLEX, cvtColor, VideoCapture, resize, INTER_CUBIC,
                  destroyAllWindows, imshow, polylines, putText, waitKey)
 from dlib import get_frontal_face_detector, shape_predictor
-from imutils.video import VideoStream
-from imutils import resize
+
 from numpy import array
 import time
 
@@ -13,18 +12,18 @@ import time
 counter, flag, avg_EAR, initial_EAR = 0, 0, 0, 0
 
 
-dlib_face = shape_predictor("../shape_predictor_68_face_landmarks.dat")
+dlib_face = shape_predictor("/home/mario/Downloads/shape_predictor_68_face_landmarks.dat")
 face_detector = get_frontal_face_detector()
 
 
-ap = ArgumentParser()
-ap.add_argument("-w", "--webcam", type=int, default=0)
-args = vars(ap.parse_args())
-cap = VideoStream(src=args["webcam"]).start()
+# ap = ArgumentParser()
+# ap.add_argument("-w", "--webcam", type=int, default=0)
+# args = vars(ap.parse_args())
+# cap = VideoStream(src=args["webcam"]).start()
 
 # cap = VideoStream(usePiCamera=True).start()  # For Raspberry Pi
 
-# cap = VideoCapture(0) # opencv
+cap = VideoCapture(0) # opencv
 
 
 def Get_Eye(face_landmark_part):
@@ -54,7 +53,7 @@ def EAR_Calc(eye):
 while True:
     start = time.time()
     frame = cap.read()
-    frame = resize(frame, width=400)
+    frame = resize(frame,None,fx=0.7,fy=0.7)
     gray = cvtColor(frame, COLOR_BGR2GRAY)
     faces = face_detector(gray)
     if initial_EAR == 0:
@@ -80,9 +79,9 @@ while True:
         polylines(frame, [right_eye], 1, (0, 255, 0), 1)
         polylines(frame, [left_eye], 1, (0, 255, 0), 1)
         avg_EAR = round((left_EAR+right_EAR)/2.0, 2)
-    putText(frame, ("EAR="+(str(avg_EAR))), (10, 60),
+        putText(frame, ("EAR="+(str(avg_EAR))), (10, 60),
             FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 0), 2)
-    putText(frame, 'initial_EAR='+(str(initial_EAR)), (10, 20),
+        putText(frame, 'initial_EAR='+(str(initial_EAR)), (10, 20),
             FONT_HERSHEY_COMPLEX, 0.7, (100, 0, 100), 2)
     if avg_EAR < (initial_EAR*0.6):
         counter += 1
@@ -99,6 +98,6 @@ while True:
     print(time.time()-start)
     if waitKey(1) == ord('q'):
         destroyAllWindows()
-        cap.stop()
+        #cap.stop()
         break
 

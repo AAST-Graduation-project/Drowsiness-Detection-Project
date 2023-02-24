@@ -2,7 +2,7 @@
 import rospy
 import cv2
 
-from Include import EAR_Calculation
+from Include import EAR_Calculation_2
 
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
@@ -21,7 +21,7 @@ def my_callback(ros_frame):
     cv2_frame = bridge.imgmsg_to_cv2(img_msg=ros_frame, desired_encoding="bgr8")
 
     #start calculations for EAR
-    cv2_frame= EAR_Calculation.Get_Face(cv2_frame)
+    cv2_frame= EAR_Calculation_2.F_Get_Face(cv2_frame)
     rate.sleep()
     #showing the frame
     cv2.imshow("img", cv2_frame)
