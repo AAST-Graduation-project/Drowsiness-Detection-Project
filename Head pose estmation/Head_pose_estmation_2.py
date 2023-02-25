@@ -8,7 +8,7 @@ face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_con
 
 mp_drawing = mp.solutions.drawing_utils
 
-drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
+#drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
 
 cap = cv2.VideoCapture(0)
 
@@ -120,9 +120,9 @@ while cap.isOpened():
         mp_drawing.draw_landmarks(
             image=image,
             landmark_list=face_landmarks,
-            connections=mp_face_mesh.FACEMESH_FACE_OVAL,
-            landmark_drawing_spec=drawing_spec,
-            connection_drawing_spec=drawing_spec)
+            connections=mp_face_mesh.FACEMESH_FACE_OVAL,)
+            #landmark_drawing_spec=drawing_spec,
+            #connection_drawing_spec=drawing_spec)
 
     cv2.imshow('Head Pose Estimation', image)
 
