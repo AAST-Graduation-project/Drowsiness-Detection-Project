@@ -4,6 +4,12 @@ import numpy as np
 from math import dist
 
 # constant values
+'''
+N_Initial_Frames: Number of Frames to Calculate inital EAR (20 ... 40)
+Holding_Frames: Number of Frames to wait when detecting Drowsiness ((20 ... 40) depends on FPS)  
+Drowsiness_Factor: % of Initial EAR to be Compared with the Current EAR to detect Drowsiness (0.5 ... 0.8)
+Ignored_Initial_EAR_Values: Any Value of EAR Less then That number will be Ignored (0.2 ... 0.1)
+'''
 N_Initial_Frames = 25
 Holding_Frames = 20
 Drowsiness_Factor = 0.7
@@ -26,7 +32,7 @@ face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.7, min_tracking_con
 name:   F_Get_Face
 Input:  cv2_Frame 
 job:    Adding State, Cuurnt Eye Aspect Ratio & Initail Eye Apect Ratio to the cv2_Frame   
-output: cv2_frame
+output: cv2_Frame
 """
 def F_Get_Face(C_Frame):
     # change encoding image from BGR to RGB
@@ -75,8 +81,8 @@ def F_Get_Face(C_Frame):
 """
 name:   F_LandmarksDetection
 Input:  Image & all coordinates 
-job:    save the eyes coordinates in two list (left_coord[] & right coord[])
-output: left_coord[] & right coord[]
+job:    save the eyes coordinates in two list (left_coord[] & right_coord[])
+output: left_coord[] & right_coord[]
 """
 def F_LandmarksDetection(C_Frame, C_results):
     #left_eye = [362, 382, 381, 380, 374, 373, 390, 249, 263, 466, 388, 387, 386, 385, 384, 398]
