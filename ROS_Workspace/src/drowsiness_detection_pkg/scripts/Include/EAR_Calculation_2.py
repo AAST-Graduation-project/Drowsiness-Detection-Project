@@ -4,6 +4,12 @@ import numpy as np
 from math import dist
 
 # constant values
+'''
+N_Initial_Frames: Number of frames to calculate intial EAR (recomended > 20)
+Holding_Frames: Number of frames to hold when detect Drowsiness State (recomended > 20 according to FPS) 
+Drowsiness_Factor:  % of Initial EAR to be compared with the current EAR (0.7 - 0.5)   
+Ignored_Initial_EAR_Values: Any Value of the Current EAR less than that will be ignored in calculating of initial EAR 
+'''
 N_Initial_Frames = 25
 Holding_Frames = 20
 Drowsiness_Factor = 0.7
