@@ -145,3 +145,7 @@ def Get_Face(frame):
         putText(frame, ("EAR="+(str(avg_EAR))), (0, 15),
             FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 0), 2)
     return frame
+    
+    
+    
+  
