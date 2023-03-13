@@ -1,4 +1,4 @@
-# Install script for directory: /home/mario/Drowsiness-Detection-Project/ROS_Workspace/src/drowsiness_detection_pkg
+# Install script for directory: /home/mario/Drowsiness-Detection-Project/ROS_Workspace/src/Drowsiness_Detection_pkg
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -43,17 +43,17 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/mario/Drowsiness-Detection-Project/ROS_Workspace/build/drowsiness_detection_pkg/catkin_generated/installspace/drowsiness_detection_pkg.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/mario/Drowsiness-Detection-Project/ROS_Workspace/build/Drowsiness_Detection_pkg/catkin_generated/installspace/Drowsiness_Detection_pkg.pc")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drowsiness_detection_pkg/cmake" TYPE FILE FILES
-    "/home/mario/Drowsiness-Detection-Project/ROS_Workspace/build/drowsiness_detection_pkg/catkin_generated/installspace/drowsiness_detection_pkgConfig.cmake"
-    "/home/mario/Drowsiness-Detection-Project/ROS_Workspace/build/drowsiness_detection_pkg/catkin_generated/installspace/drowsiness_detection_pkgConfig-version.cmake"
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/Drowsiness_Detection_pkg/cmake" TYPE FILE FILES
+    "/home/mario/Drowsiness-Detection-Project/ROS_Workspace/build/Drowsiness_Detection_pkg/catkin_generated/installspace/Drowsiness_Detection_pkgConfig.cmake"
+    "/home/mario/Drowsiness-Detection-Project/ROS_Workspace/build/Drowsiness_Detection_pkg/catkin_generated/installspace/Drowsiness_Detection_pkgConfig-version.cmake"
     )
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drowsiness_detection_pkg" TYPE FILE FILES "/home/mario/Drowsiness-Detection-Project/ROS_Workspace/src/drowsiness_detection_pkg/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/Drowsiness_Detection_pkg" TYPE FILE FILES "/home/mario/Drowsiness-Detection-Project/ROS_Workspace/src/Drowsiness_Detection_pkg/package.xml")
 endif()
 
