@@ -12,7 +12,8 @@ Ignored_Initial_EAR_Values: Any Value of EAR Less then That number will be Ignor
 '''
 N_Initial_Frames = 25
 Holding_Frames = 20
-Drowsiness_Factor = 0.7
+Drowsiness_Factor = 0.75
+Sleep_Factor = 0.4
 Ignored_Initial_EAR_Values = 0.2
 
 # global static variables 
@@ -21,7 +22,8 @@ class static:
     INITIAL_COUNTER=0
     D_COUNTER = 0
     SUM_EAR= 0
-    STATE = "NO STATE"
+    Eye_State = "No Driver"
+    
 
 # mediapipe face mesh detector
 mp_face_mesh = mp.solutions.face_mesh
@@ -29,12 +31,14 @@ face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.7, min_tracking_con
                                   refine_landmarks=True, max_num_faces= 1, static_image_mode=False)
 
 """
-name:   F_Get_Face
+name:   F_Get_EAR
 Input:  cv2_Frame 
-job:    Adding State, Cuurnt Eye Aspect Ratio & Initail Eye Apect Ratio to the cv2_Frame   
+job:     
 output: cv2_Frame
 """
-def F_Get_Face(C_Frame):
+def F_Get_EAR(C_Frame):
+    # Driver Eye State
+    static.Eye_State = "No Driver"
     # change encoding image from BGR to RGB
     RGB_Frame = cv2.cvtColor(C_Frame,cv2.COLOR_BGR2RGB)
     # improve speed
@@ -51,18 +55,8 @@ def F_Get_Face(C_Frame):
         if static.INITIAL_EAR == 0:
              F_Initial_EAR_Calc(avg_EAR)
 
-        F_Get_State(avg_EAR, static.INITIAL_EAR)
-        # put the values on the screen
-        # state
-        cv2.putText(C_Frame, ((str(static.STATE))), (10, 120),
-                cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 0), 2)
-        # initial EAR
-        cv2.putText(C_Frame, ("init_EAR="+(str(static.INITIAL_EAR))), (10, 90),
-                cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 0), 2)
-        # current EAR
-        cv2.putText(C_Frame, ("EAR="+(str(avg_EAR))), (10, 60),
-                cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 0), 2)
-        
+        static.Eye_State = F_Get_State(avg_EAR, static.INITIAL_EAR, static.Eye_State)
+         
         # for drawing the coordinates of the eyes uncomment the following lines
 
         # cv2.circle(C_Frame, left_eye[8], 2, (0,255,0),-1)
@@ -75,7 +69,7 @@ def F_Get_Face(C_Frame):
         # cv2.circle(C_Frame, right_eye[4], 2, (0,255,0),-1)
         # cv2.circle(C_Frame, right_eye[12], 2, (0,255,0),-1)
     # return the frame    
-    return C_Frame    
+    return C_Frame  , static.Eye_State 
 
 
 """
@@ -168,16 +162,17 @@ Input:  Current Eye Aspect Ratio & Initial Eye Aspect Ratio
 job:    Compere The current EAR with Initial EAR  
 output: None
 """
-def F_Get_State(C_Current_EAR, C_INITIAL_EAR):
+def F_Get_State(C_Current_EAR, C_INITIAL_EAR, C_Eye_State):
 
     if C_Current_EAR < (C_INITIAL_EAR*Drowsiness_Factor):
         static.D_COUNTER += 1
-        if static.D_COUNTER > Holding_Frames:
-            #static.flag = 1
-            static.STATE = "sleep"
+        C_Eye_State = "awake"
+        if static.D_COUNTER > Holding_Frames: 
+            C_Eye_State= "Drowsy"
         
     elif C_Current_EAR >= (C_INITIAL_EAR*Drowsiness_Factor):
         static.D_COUNTER = 0
-        #static.flag = 0
-        static.STATE = "awake"
+        C_Eye_State = "awake"
+
+    return C_Eye_State
     

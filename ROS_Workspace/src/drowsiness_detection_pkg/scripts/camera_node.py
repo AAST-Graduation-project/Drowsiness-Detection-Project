@@ -7,6 +7,7 @@ from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
+
 # Import Libraries
 import cv2
 
@@ -49,6 +50,7 @@ if __name__ == '__main__':
 
     # rospy.publisher(topic_name, msg_type, queue_size)
     pub = rospy.Publisher('my_topic', Image, queue_size=1)
+  
 
     # call only on shutdown
     rospy.on_shutdown(shutdown_callback)
@@ -68,6 +70,7 @@ if __name__ == '__main__':
             # published to the topic
             rospy.loginfo("send a frame")
             pub.publish(ros_frame)
+            rate.sleep()
 
         else:
             # print error msg
@@ -75,7 +78,7 @@ if __name__ == '__main__':
             
 
         #delay
-        rate.sleep()
+        
     
 
 
