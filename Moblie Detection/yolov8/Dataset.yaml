@@ -1,6 +1,0 @@
-train: yolov8\train
-val: yolov8\val
-
-nc: 1
-
-names: ['phone']
