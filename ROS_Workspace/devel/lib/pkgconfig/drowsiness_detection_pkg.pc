@@ -1,7 +1,7 @@
 prefix=/home/mario/Drowsiness-Detection-Project/ROS_Workspace/devel
 
-Name: drowsiness_detection_pkg
-Description: Description of drowsiness_detection_pkg
+Name: Drowsiness_Detection_pkg
+Description: Description of Drowsiness_Detection_pkg
 Version: 0.0.0
 Cflags: 
 Libs: -L${prefix}/lib 

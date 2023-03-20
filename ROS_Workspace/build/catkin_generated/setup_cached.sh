@@ -8,3 +8,4 @@
 
 # modified environment variables
 export PWD='/home/mario/Drowsiness-Detection-Project/ROS_Workspace/build'
+export PYTHONPATH="/home/mario/Drowsiness-Detection-Project/ROS_Workspace/devel/lib/python3/dist-packages:$PYTHONPATH"

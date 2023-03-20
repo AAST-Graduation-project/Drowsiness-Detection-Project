@@ -34,17 +34,13 @@ def my_callback(ros_frame):
     cv2_frame = bridge.imgmsg_to_cv2(img_msg=ros_frame, desired_encoding="bgr8")
 
     #start calculations for EAR
-    cv2_frame= EAR_Calculation_2.F_Get_Face(cv2_frame)
+    cv2_frame, Eye_State= EAR_Calculation_2.F_Get_EAR(cv2_frame)
 
-    
-    #showing the frame
-    cv2.imshow("img", cv2_frame)
-
-    #delay  
-    cv2.waitKey(1)  # delay for showing frames 1 ms
-    rate.sleep()   # rate of receiving for the node
+    pub = rospy.Publisher("EAR_Result",String,queue_size=1)
+    pub.publish(Eye_State)
 
     # end your code for EAR_node
+    
 
 """
 Function_name: shutdown_callback
@@ -63,10 +59,10 @@ if __name__ == '__main__':
     rospy.init_node("EAR")
 
     # set rate to publish in (x) Hz
-    rate = rospy.Rate(20)
+    rate = rospy.Rate(10)
 
     # rospy.Subscriber(topic_name, msg_type, queue_size)
-    rospy.Subscriber('my_topic', Image, my_callback, queue_size= 1)
+    rospy.Subscriber('my_topic', Image, my_callback, queue_size= None)
     
     while (not rospy.is_shutdown()):
         # infinity_loop
