@@ -13,9 +13,10 @@ mp_drawing = mp.solutions.drawing_utils
 cap = cv2.VideoCapture(0)
 
 while cap.isOpened():
+    start = time.time()
     success, image = cap.read()
 
-    start = time.time()
+    
 
     # Flip the image horizontally for a later selfie-view display
     # Also convert the color space from BGR to RGB
