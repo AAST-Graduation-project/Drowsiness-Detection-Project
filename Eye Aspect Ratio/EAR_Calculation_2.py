@@ -1,10 +1,24 @@
-import cv2
-import mediapipe as mp
-import numpy as np
-from scipy.spatial.distance import euclidean as dist
-import time
+'''
+Drowsiness Detection with computer vision using mediapipe 
+Author: Mario Ezzat
+'''
+# ==============================================================================
+# -- Imports ------------------------------------------------------------------
+# ==============================================================================
+try:
+    import cv2
+    import mediapipe as mp
+    import numpy as np
+    # uncomment one line of the following
+    from scipy.spatial.distance import euclidean as dist
+    # from math import dist
+except ImportError:
+    raise RuntimeError(
+        'cannot import one or more packages, make sure all packages are installed')
 
-# constant values
+# ==============================================================================
+# -- Constants -----------------------------------------------------------------
+# ==============================================================================
 '''
 N_Initial_Frames: Number of Frames to Calculate initial EAR (20 ... 40)
 Holding_Frames: Number of Frames to wait when detecting Drowsiness ((20 ... 40) depends on FPS)  
@@ -16,7 +30,9 @@ Holding_Frames = 20
 Drowsiness_Factor = 0.75
 Ignored_Initial_EAR_Values = 0.2
 
-# Global Static Variables
+# ==============================================================================
+# -- Static Variables ----------------------------------------------------------
+# ==============================================================================
 
 
 class static:
@@ -27,20 +43,21 @@ class static:
     STATE = "NO STATE"
 
 
-# mediapipe face mesh detector
+# ==============================================================================
+# -- Mediapipe Face Detector ---------------------------------------------------
+# ==============================================================================
 mp_face_mesh = mp.solutions.face_mesh
 face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.7, min_tracking_confidence=0.7,
                                   refine_landmarks=True, max_num_faces=1, static_image_mode=False)
 
-"""
-name:   F_Get_Face
-Input:  cv2_Frame 
-job:    Adding State, Currant Eye Aspect Ratio & Initial Eye Aspect Ratio to the cv2_Frame   
-output: cv2_Frame
-"""
-
 
 def F_Get_Face(C_Frame):
+    """
+    name:   F_Get_Face
+    Args:   cv2_Frame 
+    job:    Adding State, Currant Eye Aspect Ratio & Initial Eye Aspect Ratio to the cv2_Frame   
+    Return: cv2_Frame
+    """
     # Change Encoding Frame from BGR to RGB
     RGB_Frame = cv2.cvtColor(C_Frame, cv2.COLOR_BGR2RGB)
 
@@ -65,29 +82,30 @@ def F_Get_Face(C_Frame):
         # Find the Driver's State
         F_Get_State(avg_EAR, static.INITIAL_EAR)
 
-        # put the values on the screen
-        # state
-        cv2.putText(C_Frame, ((str(static.STATE))), (10, 120),
-                    cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 0), 2)
+        # uncomment the following lines to put the values on the screen
         # initial EAR
         cv2.putText(C_Frame, ("init_EAR="+(str(static.INITIAL_EAR))), (10, 90),
                     cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 0), 2)
         # current EAR
         cv2.putText(C_Frame, ("EAR="+(str(avg_EAR))), (10, 60),
                     cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 0), 2)
+        # state
+        cv2.putText(C_Frame, ((str(static.STATE))), (10, 120),
+                    cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 0), 2)
+
+    cv2.imshow("Driver Image", C_Frame)
     # return the frame
-    return C_Frame
-
-
-"""
-name:   F_LandmarksDetection
-Input:  Image & all coordinates 
-job:    save the eyes coordinates in two list (left_coord[] & right_coord[])
-output: left_coord[] & right_coord[]
-"""
+    return C_Frame, static.STATE
+# ==============================================================================
 
 
 def F_LandmarksDetection(C_Frame, C_results):
+    """
+    Name:   F_LandmarksDetection
+    Args:   Image & all coordinates 
+    Job:    Save the Eyes Coordinates in Two-Array (left_coord[(p.x, p.y)] & right_coord[(p.x, p.y)])
+    Return: left_coord[] & right_coord[]
+    """
     #left_eye = [362, 382, 381, 380, 374, 373, 390, 249, 263, 466, 388, 387, 386, 385, 384, 398]
     #right_eye = [33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161, 246]
 
@@ -99,30 +117,29 @@ def F_LandmarksDetection(C_Frame, C_results):
 
     # Left Eye Coordinates
     left_coord = np.array([(int(Landmark[i].x * img_width), int(Landmark[i].y * img_hight))
-                          for i in [362,  374,  263,  386]])
+                          for i in [362, 374, 263, 386]])
 
     # Right Eye Coordinates
     right_coord = np.array([(int(Landmark[i].x * img_width), int(Landmark[i].y * img_hight))
-                           for i in [33,  145,  133, 159]])
+                           for i in [33, 145, 133, 159]])
 
     # Returned Coordinates
     return left_coord,  right_coord
-
-
-"""
-name:   F_EAR_Calc
-Input:  Left_eye[(x, y)] & Right_eye[(x, y)]
-job:    calculate Eye Aspect Ratio 
-output: the average EAR of both eyes
-"""
+# ==============================================================================
 
 
 def F_EAR_Calc(C_left_eye, C_right_eye):
+    """
+    Name:   F_EAR_Calc
+    Args:   Left_eye[(x, y)] & Right_eye[(x, y)]
+    Job:    calculate Eye Aspect Ratio (Hight/Width) for Both Left and Right Eyes
+    Return: The Average EAR of Both Eyes
+    """
     # Calculate the Eye Width for Both Eyes
     left_eye_width = dist(C_left_eye[0], C_left_eye[2])
     right_eye_width = dist(C_right_eye[0], C_right_eye[2])
 
-    # Eye Aspect Ratio = Eye Height/Eye Width
+    # Eye Aspect Ratio = Eye Hight/Eye Width
     left_EAR = dist(C_left_eye[3], C_left_eye[1]) / left_eye_width
     right_EAR = dist(C_right_eye[3], C_right_eye[1]) / right_eye_width
 
@@ -131,17 +148,16 @@ def F_EAR_Calc(C_left_eye, C_right_eye):
 
     # Return the Average
     return AVG_EAR
-
-
-"""
-name:   F_Initial_EAR_Calc
-Input:  Current Aye Aspect Ratio
-job:    Calculates the The Initial EAR from the current EAR  
-output: None
-"""
+# ==============================================================================
 
 
 def F_Initial_EAR_Calc(C_avg_EAR):
+    """
+    Name:   F_Initial_EAR_Calc
+    Args:   Current Aye Aspect Ratio
+    Job:    Calculates the The Initial EAR from the current EAR Without the Blinking Frames (Run only at the Beginning)
+    Return: None
+    """
     # When the Counter is reached the Threshold
     if static.INITIAL_COUNTER == N_Initial_Frames:
         # Calculate the Average Initial EAR from the Sum of the Current EAR
@@ -157,19 +173,23 @@ def F_Initial_EAR_Calc(C_avg_EAR):
         static.SUM_EAR += C_avg_EAR
         # Increment the Counter
         static.INITIAL_COUNTER += 1
-
-
-"""
-name:   F_Get_State
-Input:  Current Eye Aspect Ratio & Initial Eye Aspect Ratio
-job:    Compere The Current EAR with Initial EAR  
-output: None
-"""
+# ==============================================================================
 
 
 def F_Get_State(C_Current_EAR, C_INITIAL_EAR):
+    """
+    Name:   F_Get_State
+    Args:   Current Eye Aspect Ratio & Initial Eye Aspect Ratio
+    Job:    Compere The Current EAR with Initial EAR o Get the State of the Driver
+    Return: None
+    """
+    # Initial State Suppose No Driver
+    static.STATE = "No Driver"
+
     # When the Eye is About to be Closed
     if C_Current_EAR < (C_INITIAL_EAR*Drowsiness_Factor):
+        # Maybe the Driver is Blinking But Still Awake
+        static.STATE = "Blinking"
         # Increment the Drowsiness Counter
         static.D_COUNTER += 1
         # When the Drowsiness Counter Reaches the Threshold (Not Blinking)
@@ -183,20 +203,19 @@ def F_Get_State(C_Current_EAR, C_INITIAL_EAR):
         static.D_COUNTER = 0
         # The Driver is Awake
         static.STATE = "awake"
+# ==============================================================================
 
 
+# ==============================================================================
+# -- Main Loop -----------------------------------------------------------------
+# ==============================================================================
 cap = cv2.VideoCapture(0)
 
-while True:
-
-    _, Frame = cap.read()
-    start = time.time()
-    New = F_Get_Face(Frame)
-    End = time.time()-start
-    End = 1/End
-    print(f"{End: .2f}")
-    cv2.imshow("Frame", New)
-    if cv2.waitKey(1) == ord('q'):
-        cap.release()
-        cv2.destroyAllWindows()
-        break
+if __name__ == "__main__":
+    while True:
+        ret, Frame = cap.read()
+        New_Frame, State = F_Get_Face(Frame)
+        if cv2.waitKey(1) == ord('q'):
+            cap.release
+            cv2.destroyAllWindows()
+            break
