@@ -1,6 +1,0 @@
-train: D:\yolov8\train
-val: D:\yolov8\val
-
-nc: 1
-
-names: ["phone"]
