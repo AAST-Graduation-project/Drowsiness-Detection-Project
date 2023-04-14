@@ -11,6 +11,13 @@
 /*Miximum accepted heart rate of the function of iir filter*/
 #define MAX_ACCEPTED_BPM    130
 
+/*difference between reference &current bpm which represent awake state*/
+#define DIFF_AWAKE      5
+/*difference between reference &current bpm which represent fatigued state*/
+#define DIFF_FATIGUED   8
+/*difference between reference &current bpm which represent drowsy state*/
+#define DIFF_DROWSY     13
+
 
 /*Array which hold the 3 values of the bpm to filtered them*/
 float x[FILTER_ORDER] = {0};
@@ -32,6 +39,8 @@ int beat_ref;
 /*Array which hold two inital values of BPM to compare them to get the reference value of the BPM while driving*/
 int arr_of_initial[2];
 int ref_flag=0;
+
+String State;
 
 /*number of readings to average*/
 const int NUM_READINGS = 50; 
@@ -102,21 +111,27 @@ void iir_filter(float input, float *output) {
 
 /**************************************************************************************************************************/
 /*Function to compare between the beat reference & the current beat per minute to return the state of the driver*/
-int Driver_state(int ref , int current_bpm)
+String Driver_state(int ref , int current_bpm)
 {
-  int i;
+  String My_State;
   /*this condition represent if the driver is awake*/
-  if( abs(current_bpm - ref)  < 5)
+  if((current_bpm - ref)  < DIFF_AWAKE )
   {
-    i=0;
+    My_State = "Awake";
   }
-  /*this condition if the driver is drowsy*/
-  else if((ref - current_bpm ) > 5)
+  /*this condition if the driver is Fatigued*/
+  else if((ref - current_bpm ) > DIFF_FATIGUED)
   {
-    i=1;
+    My_State = "Fatigued";
   }
 
-  return i;
+
+   else if((ref - current_bpm ) > DIFF_DROWSY)
+  {
+    My_State = "Drowsy";
+  }
+
+  return My_State ;
   
 }
 
@@ -222,7 +237,11 @@ void loop() {
 
       Serial.print("ref: ");
     Serial.println(beat_ref);
-      
+
+    State = Driver_state(beat_ref,averageBPM);
+
+    Serial.print("State: ");
+    Serial.println(State);  
 
    
 }
