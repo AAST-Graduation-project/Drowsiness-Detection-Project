@@ -100,6 +100,26 @@ void iir_filter(float input, float *output) {
     }
 }
 
+/**************************************************************************************************************************/
+/*Function to compare between the beat reference & the current beat per minute to return the state of the driver*/
+int Driver_state(int ref , int current_bpm)
+{
+  int i;
+  /*this condition represent if the driver is awake*/
+  if( abs(current_bpm - ref)  < 5)
+  {
+    i=0;
+  }
+  /*this condition if the driver is drowsy*/
+  else if((ref - current_bpm ) > 5)
+  {
+    i=1;
+  }
+
+  return i;
+  
+}
+
 
 /*****************************************************************************************************************************/
 void setup()
