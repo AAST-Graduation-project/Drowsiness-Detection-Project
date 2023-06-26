@@ -6,7 +6,7 @@
 ### MediaPipe ( High accuracy and High speed)
 
 ##  Important Requirements for MediaPipe 
-### 2- Python Libraries (MediaPipe works only with Python3)
+### 1- Python Libraries (MediaPipe works only with Python3)
 ##### pip3 install opencv-python
 ##### pip3 install numpy
 
